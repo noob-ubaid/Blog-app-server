@@ -4,6 +4,6 @@ const app: Application = express();
 
 
 app.use('/',async(req,res)=>{
-    res.send('hello world')
+    res.send('Hello World')
 })
 export default app;
