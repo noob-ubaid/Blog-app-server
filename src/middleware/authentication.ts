@@ -17,7 +17,7 @@ export enum UserRole {
   USER = "USER",
   ADMIN = "ADMIN",
 }
-export const authentication = (...roles: string[]) => {
+export const authentication = (...roles: UserRole[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const session = await auth.api.getSession({
@@ -49,7 +49,6 @@ export const authentication = (...roles: string[]) => {
             "Forbidden! You don't have permission to access this resources!",
         });
       }
-      console.log(session);
       next();
     } catch (error: any) {
       next(error);
