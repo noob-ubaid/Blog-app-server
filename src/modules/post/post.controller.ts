@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { postService } from "./post.service";
-import { success } from "better-auth/*";
 
 const getAllPosts = async (req: Request, res: Response) => {
   try {
-    const result = await postService.getAllPosts();
+    const { search } = req.query;
+    const searchString = typeof search === "string" ? search : undefined;
+    const result = await postService.getAllPosts({ search: searchString });
     res.status(200).json({
       success: true,
       data: result,
