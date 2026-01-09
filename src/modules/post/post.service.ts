@@ -1,3 +1,4 @@
+import { ADDRGETNETWORKPARAMS } from "node:dns";
 import { Post, PostStatus } from "../../../generated/prisma/client";
 import { PostWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
@@ -21,7 +22,7 @@ const getAllPosts = async ({
   authorId: string | undefined;
   limit: number;
   skip: number;
-  page: number
+  page: number;
   sortBy: string;
   sortOrder: string;
 }) => {
@@ -92,9 +93,18 @@ const getAllPosts = async ({
       total,
       page,
       limit,
-      totalPages : Math.ceil(total / limit)
+      totalPages: Math.ceil(total / limit),
     },
   };
+};
+
+const getPostById = async (postId: string) => {
+  const result = await prisma.post.findUnique({
+    where: {
+      id: postId,
+    },
+  });
+  return result;
 };
 
 const createPost = async (
@@ -113,4 +123,5 @@ const createPost = async (
 export const postService = {
   createPost,
   getAllPosts,
+  getPostById,
 };
