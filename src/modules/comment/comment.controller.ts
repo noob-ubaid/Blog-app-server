@@ -19,7 +19,7 @@ const createComment = async (req: Request, res: Response) => {
   }
 };
 
-const getCommentById = async (req: Request, res: Response) => {
+const getCommentsByAuthorId = async (req: Request, res: Response) => {
   try {
     const { authorId } = req.params;
     const result = await commentService.getCommentsByAuthorId(
@@ -37,7 +37,7 @@ const getCommentById = async (req: Request, res: Response) => {
     });
   }
 };
-const getCommentsByAuthorId = async (req: Request, res: Response) => {
+const getCommentById = async (req: Request, res: Response) => {
   try {
     const { commentId } = req.params;
     const result = await commentService.getCommentById(commentId as string);
