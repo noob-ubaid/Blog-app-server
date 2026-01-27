@@ -100,7 +100,6 @@ const getAllPosts = async ({
     },
   };
 };
-
 const getPostById = async (postId: string) => {
   return await prisma.$transaction(async (tx) => {
     await tx.post.update({
@@ -113,7 +112,7 @@ const getPostById = async (postId: string) => {
         },
       },
     });
-    return await tx.post.findUnique({
+    const postData = await tx.post.findUnique({
       where: {
         id: postId,
       },
@@ -132,15 +131,21 @@ const getPostById = async (postId: string) => {
               orderBy: { createdAt: "asc" },
               include: {
                 replies: {
-                  where: { status: CommentStatus.APPROVED },
+                  where: {
+                    status: CommentStatus.APPROVED,
+                  },
                   orderBy: { createdAt: "asc" },
                 },
               },
             },
           },
         },
+        _count: {
+          select: { comments: true },
+        },
       },
     });
+    return postData;
   });
 };
 
