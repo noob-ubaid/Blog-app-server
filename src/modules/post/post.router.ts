@@ -13,9 +13,10 @@ router.get(
 router.patch(
   "/:postId",
   authentication(UserRole.USER, UserRole.ADMIN),
-  postController.updatePosts,
+  postController.updatePost,
 );
 router.get("/:postId", postController.getPostById);
 router.post("/", authentication(UserRole.USER), postController.createPost);
+router.post("/:postId", authentication(UserRole.USER,UserRole.ADMIN), postController.deletePost);
 
 export const postRouter: Router = router;

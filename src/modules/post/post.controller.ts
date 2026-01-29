@@ -101,7 +101,7 @@ const getMyPosts = async (req: Request, res: Response) => {
   }
 };
 
-const updatePosts = async (req: Request, res: Response) => {
+const updatePost = async (req: Request, res: Response) => {
   try {
     const { postId } = req.params;
     const user = req.user;
@@ -128,10 +128,33 @@ const updatePosts = async (req: Request, res: Response) => {
   }
 };
 
+const deletePost = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+    const { postId } = req.params;
+    const isAdmin = user?.role === UserRole.ADMIN;
+    const result = await postService.deletePost(
+      postId as string,
+      user?.id as string,
+      isAdmin,
+    );
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(404).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 export const postController = {
   createPost,
   getAllPosts,
-  updatePosts,
+  updatePost,
   getMyPosts,
+  deletePost,
   getPostById,
 };
