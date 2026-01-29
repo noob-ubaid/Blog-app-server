@@ -3,6 +3,7 @@ import { postService } from "./post.service";
 import { PostStatus } from "../../../generated/prisma/enums";
 import paginationSortingHelpers from "../../helpers/paginationSortingHelpers";
 import { success } from "better-auth/*";
+import { UserRole } from "../../middleware/authentication";
 
 const getAllPosts = async (req: Request, res: Response) => {
   try {
@@ -83,8 +84,8 @@ const createPost = async (req: Request, res: Response) => {
 const getMyPosts = async (req: Request, res: Response) => {
   try {
     const user = req.user;
-    if(!user) {
-      throw new Error("You are not authorized")
+    if (!user) {
+      throw new Error("You are not authorized");
     }
     const result = await postService.getMyPosts(user?.id as string);
     res.status(200).json({
@@ -92,7 +93,7 @@ const getMyPosts = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error: any) {
-    console.log(error)
+    console.log(error);
     res.status(404).json({
       success: false,
       message: "Post fetched failed",
@@ -100,9 +101,37 @@ const getMyPosts = async (req: Request, res: Response) => {
   }
 };
 
+const updatePosts = async (req: Request, res: Response) => {
+  try {
+    const { postId } = req.params;
+    const user = req.user;
+    if (!user) {
+      throw new Error("You are not authorized");
+    }
+    const isAdmin = user.role === UserRole.ADMIN;
+    const result = await postService.updatePosts(
+      postId as string,
+      req.body,
+      user?.id,
+      isAdmin,
+    );
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (error: any) {
+    console.log(error);
+    res.status(404).json({
+      success: false,
+      message: "Post update failed",
+    });
+  }
+};
+
 export const postController = {
   createPost,
   getAllPosts,
+  updatePosts,
   getMyPosts,
   getPostById,
 };

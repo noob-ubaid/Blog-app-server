@@ -10,6 +10,11 @@ router.get(
   postController.getMyPosts,
 );
 
+router.patch(
+  "/:postId",
+  authentication(UserRole.USER, UserRole.ADMIN),
+  postController.updatePosts,
+);
 router.get("/:postId", postController.getPostById);
 router.post("/", authentication(UserRole.USER), postController.createPost);
 
