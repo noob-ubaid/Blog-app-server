@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { postService } from "./post.service";
 import { PostStatus } from "../../../generated/prisma/enums";
 import paginationSortingHelpers from "../../helpers/paginationSortingHelpers";
+import { success } from "better-auth/*";
 
 const getAllPosts = async (req: Request, res: Response) => {
   try {
@@ -14,7 +15,7 @@ const getAllPosts = async (req: Request, res: Response) => {
     const status = req.query.status as PostStatus;
     const authorId = req.query.authorId as string | undefined;
     const { page, limit, skip, sortBy, sortOrder } = paginationSortingHelpers(
-      req.query
+      req.query,
     );
     const result = await postService.getAllPosts({
       search: searchString,
@@ -64,7 +65,7 @@ const createPost = async (req: Request, res: Response) => {
   try {
     const result = await postService.createPost(
       req.body,
-      req.user?.id as string
+      req.user?.id as string,
     );
     res.status(201).json({
       success: true,
@@ -79,8 +80,25 @@ const createPost = async (req: Request, res: Response) => {
   }
 };
 
+const getMyPosts = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+    const result = await postService.getMyPosts(user?.id as string);
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(404).json({
+      success: false,
+      message: "Post fetched failed",
+    });
+  }
+};
+
 export const postController = {
   createPost,
   getAllPosts,
+  getMyPosts,
   getPostById,
 };

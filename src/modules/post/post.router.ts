@@ -4,6 +4,12 @@ import { authentication, UserRole } from "../../middleware/authentication";
 
 const router = Router();
 router.get("/", postController.getAllPosts);
+router.get(
+  "/my-posts",
+  authentication(UserRole.USER),
+  postController.getMyPosts,
+);
+
 router.get("/:postId", postController.getPostById);
 router.post("/", authentication(UserRole.USER), postController.createPost);
 

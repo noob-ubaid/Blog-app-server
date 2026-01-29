@@ -165,8 +165,34 @@ const createPost = async (
   return result;
 };
 
+const getMyPosts = async (authorId: string) => {
+  await prisma.user.findUniqueOrThrow({
+    where: {
+      id: authorId,
+      status: "ACTIVE",
+    },
+    select: {
+      id: true,
+    },
+  });
+  return await prisma.post.findMany({
+    where: {
+      authorId,
+    },
+    orderBy: { createdAt: "desc" },
+    include: {
+      _count: {
+        select: {
+          comments: true,
+        },
+      },
+    },
+  });
+};
+
 export const postService = {
   createPost,
   getAllPosts,
   getPostById,
+  getMyPosts
 };
